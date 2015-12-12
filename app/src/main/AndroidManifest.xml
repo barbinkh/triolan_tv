@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?><!-- suppress AndroidDomInspection -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.forwork.triolan">
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!--    <uses-feature android:glEsVersion="0x00030001" android:required="true" />  -->
+    <application
+        android:name="com.forwork.triolan.soap.TriolanAPI"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppThemeTriolan"
+        android:hardwareAccelerated="true"
+        android:versionCode="1">
+
+        <activity
+            android:name="com.forwork.triolan.MainActivity"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.SEARCH" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+
+            android:name="com.compdigitec.libvlcandroidsample.VideoActivity"
+            android:label="Просмотр"
+            android:screenOrientation="landscape"
+            android:process="com.forwork.triolan.VideoActivity"
+            android:theme="@style/AppThemeTriolan" />
+
+        <activity
+
+            android:name=".tab.Channels"
+            android:label="Каналы"
+            android:theme="@style/AppThemeTriolan" />
+        <activity
+
+            android:name=".tab.FavoriteChannels"
+            android:label="Избранные"
+            android:theme="@style/AppThemeTriolan" />
+
+    </application>
+
+</manifest>

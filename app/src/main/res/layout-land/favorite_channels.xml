@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/back_land" >
+
+    <GridView
+        android:numColumns="7"
+        android:gravity="center"
+        android:columnWidth="125dp"
+        android:stretchMode="columnWidth"
+        android:scrollbarSize="2dp"
+        android:scrollbarThumbVertical="@drawable/gradient_linear"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingRight="5dp"
+        android:id="@+id/grid_favorite"
+        />
+
+</RelativeLayout>
