@@ -1,4 +1,4 @@
-package com.forwork.triolan;
+package com.forwork.triolan.ui.adapter;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -12,6 +12,8 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.forwork.triolan.R;
+import com.forwork.triolan.model.CustomData;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -22,18 +24,61 @@ import com.nostra13.universalimageloader.utils.StorageUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
-public class CustomList extends ArrayAdapter<CustomData> implements Filterable{
-    private final Activity context;
+public class CustomList extends ArrayAdapter<CustomData> implements Filterable {
     public static ArrayList<CustomData> objects;
-    private ArrayList<CustomData> objects_filter;
-    private ImageView streamView;
-    public ArrayList<CustomData> original;
     public static String streamUrl;
+    private final Activity context;
+    public ArrayList<CustomData> original;
+    private ArrayList<CustomData> objects_filter;
+    Filter myFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            constraint = constraint.toString().toLowerCase();
+            FilterResults filterResults = new FilterResults();
+            ArrayList<CustomData> tempList = new ArrayList<CustomData>();
+            //constraint is the result from text you want to filter against.
+            //objects is your data set you will filter from
+            if (constraint != null && objects_filter != null) {
+                int length = objects_filter.size();
+                int i = 0;
+                while (i < length) {
+                    CustomData item = objects_filter.get(i);
+                    //do whatever you wanna do here
+                    //adding result                    set output array
+                    if (item.getWeb().toLowerCase().contains(constraint))
+                        tempList.add(item);
+
+                    i++;
+                }
+                //following two lines is very important
+                //as publish result can only take FilterResults objects
+                filterResults.values = tempList;
+                filterResults.count = tempList.size();
+            } else {
+                synchronized (context) {
+                    filterResults.values = tempList;
+                    filterResults.count = tempList.size();
+                    ;
+                }
+            }
+            return filterResults;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence contraint, FilterResults results) {
+
+            objects = (ArrayList<CustomData>) results.values;
+            if (results.count > 0) {
+                notifyDataSetChanged();
+            } else {
+                notifyDataSetInvalidated();
+            }
+        }
+    };
+    private ImageView streamView;
     private ImageLoader imageLoader;
-
-
 
     public CustomList(Activity context, ArrayList<CustomData> objects) {
         super(context, R.layout.data_view, objects);
@@ -87,65 +132,13 @@ public class CustomList extends ArrayAdapter<CustomData> implements Filterable{
             }                                                                   //+ ". " + objects.get(position).getWeb()
             streamUrl = objects.get(position).getStream();
             imageLoader.displayImage(objects.get(position).getPicture(), imageView, options);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.e("ERROR", e.toString());
             rowView.setVisibility(View.GONE);
         }
 
         return rowView;
     }
-
-    Filter myFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            constraint = constraint.toString().toLowerCase();
-            FilterResults filterResults = new FilterResults();
-            ArrayList<CustomData> tempList=new ArrayList<CustomData>();
-            //constraint is the result from text you want to filter against.
-            //objects is your data set you will filter from
-            if(constraint != null && objects_filter!=null) {
-                int length = objects_filter.size();
-                int i=0;
-                while(i<length){
-                    CustomData item = objects_filter.get(i);
-                    //do whatever you wanna do here
-                    //adding result                    set output array
-                    if(item.getWeb().toLowerCase().contains(constraint))
-                    tempList.add(item);
-
-                    i++;
-                }
-                //following two lines is very important
-                //as publish result can only take FilterResults objects
-                filterResults.values = tempList;
-                filterResults.count = tempList.size();
-            }
-
-            else
-            {
-                synchronized(context)
-                {
-                    filterResults.values = tempList;
-                    filterResults.count = tempList.size();;
-                }
-            }
-            return filterResults;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        protected void publishResults(CharSequence contraint, FilterResults results) {
-
-            objects = (ArrayList<CustomData>) results.values;
-            if (results.count > 0) {
-                notifyDataSetChanged();
-            } else {
-                notifyDataSetInvalidated();
-            }
-        }
-    };
 
     @Override
     public Filter getFilter() {

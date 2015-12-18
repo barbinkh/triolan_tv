@@ -1,18 +1,18 @@
 /*****************************************************************************
  * Aout.java
- *****************************************************************************
+ * ****************************************************************************
  * Copyright © 2011-2012 VLC authors and VideoLAN
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2.1 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
@@ -26,6 +26,8 @@ import android.media.AudioTrack;
 import android.util.Log;
 
 public class Aout {
+    private static final String TAG = "LibVLC/aout";
+    private AudioTrack mAudioTrack;
     /**
      * Java side of the audio output module for Android.
      * Uses an AudioTrack to play decoded audio buffers.
@@ -35,9 +37,6 @@ public class Aout {
 
     public Aout() {
     }
-
-    private AudioTrack mAudioTrack;
-    private static final String TAG = "LibVLC/aout";
 
     public void init(int sampleRateInHz, int channels, int samples) {
         Log.d(TAG, sampleRateInHz + ", " + channels + ", " + samples + "=>" + channels * samples);

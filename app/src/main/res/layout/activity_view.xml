@@ -2,21 +2,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.forwork.triolan.View">
 
     <fragment
         android:id="@+id/play"
         android:name="com.compdigitec.libvlcandroidsample.VideoActivity"
+        class="com.compdigitec.libvlcandroidsample.VideoActivity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_gravity="center"
-        tools:layout="@layout/sample"
-        class="com.compdigitec.libvlcandroidsample.VideoActivity"/>
+        tools:layout="@layout/sample" />
 
 </RelativeLayout>

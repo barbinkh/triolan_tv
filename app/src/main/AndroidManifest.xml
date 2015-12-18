@@ -12,14 +12,14 @@
     <application
         android:name="com.forwork.triolan.soap.TriolanAPI"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppThemeTriolan"
-        android:hardwareAccelerated="true"
         android:versionCode="1">
 
         <activity
-            android:name="com.forwork.triolan.MainActivity"
+            android:name=".ui.MainActivity"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"
 
@@ -36,21 +36,23 @@
 
             android:name="com.compdigitec.libvlcandroidsample.VideoActivity"
             android:label="Просмотр"
-            android:screenOrientation="landscape"
             android:process="com.forwork.triolan.VideoActivity"
+            android:screenOrientation="landscape"
             android:theme="@style/AppThemeTriolan" />
 
         <activity
 
-            android:name=".tab.Channels"
+            android:name=".ui.fragment.Channels"
             android:label="Каналы"
             android:theme="@style/AppThemeTriolan" />
         <activity
 
-            android:name=".tab.FavoriteChannels"
+            android:name=".ui.fragment.FavoriteChannels"
             android:label="Избранные"
             android:theme="@style/AppThemeTriolan" />
-
+        <activity
+            android:name="com.purplebrain.adbuddiz.sdk.AdBuddizActivity"
+            android:theme="@android:style/Theme.Translucent" />
     </application>
 
 </manifest>

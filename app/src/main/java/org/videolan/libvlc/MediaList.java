@@ -1,19 +1,19 @@
 /*****************************************************************************
  * MediaList.java
- *****************************************************************************
+ * ****************************************************************************
  * Copyright © 2013 VLC authors and VideoLAN
  * Copyright © 2013 Edward Wang
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2.1 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
@@ -29,32 +29,10 @@ import java.util.ArrayList;
  */
 public class MediaList {
     private static final String TAG = "VLC/LibVLC/MediaList";
-
-    /* Since the libvlc_media_t is not created until the media plays, we have
-     * to cache them here. */
-    private class MediaHolder {
-        Media m;
-        boolean noVideo; // default false
-        boolean noHardwareAcceleration; // default false
-
-        public MediaHolder(Media media) {
-            m = media;
-            noVideo = false;
-            noHardwareAcceleration = false;
-        }
-
-        public MediaHolder(Media m_, boolean noVideo_, boolean noHardwareAcceleration_) {
-            m = m_;
-            noVideo = noVideo_;
-            noHardwareAcceleration = noHardwareAcceleration_;
-        }
-    }
-
     /* TODO: add locking */
     private ArrayList<MediaHolder> mInternalList;
     private LibVLC mLibVLC; // Used to create new objects that require a libvlc instance
     private EventHandler mEventHandler;
-
     public MediaList(LibVLC libVLC) {
         mEventHandler = new EventHandler(); // used in init() below to fire events at the correct targets
         mInternalList = new ArrayList<MediaHolder>();
@@ -260,5 +238,25 @@ public class MediaList {
         b.putString("item_uri", uri);
         b.putInt("item_index", position);
         mEventHandler.callback(event, b);
+    }
+
+    /* Since the libvlc_media_t is not created until the media plays, we have
+     * to cache them here. */
+    private class MediaHolder {
+        Media m;
+        boolean noVideo; // default false
+        boolean noHardwareAcceleration; // default false
+
+        public MediaHolder(Media media) {
+            m = media;
+            noVideo = false;
+            noHardwareAcceleration = false;
+        }
+
+        public MediaHolder(Media m_, boolean noVideo_, boolean noHardwareAcceleration_) {
+            m = m_;
+            noVideo = noVideo_;
+            noHardwareAcceleration = noHardwareAcceleration_;
+        }
     }
 }

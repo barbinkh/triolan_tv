@@ -20,5 +20,6 @@
     <string name="invalid_location">The location %1$s cannot be played.</string>
     <string name="tab_favorite">Избранные каналы</string>
     <string name="search_title">Поиск</string>
+    <string name="adbuddiz_key">"60bba73d-bdd1-4912-b107-0ff1e114486d"</string>
 
 </resources>

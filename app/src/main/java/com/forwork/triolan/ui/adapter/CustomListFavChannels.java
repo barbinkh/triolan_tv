@@ -1,4 +1,4 @@
-package com.forwork.triolan;
+package com.forwork.triolan.ui.adapter;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.forwork.triolan.R;
+import com.forwork.triolan.model.CustomData;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -15,14 +18,15 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.utils.StorageUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 
 public class CustomListFavChannels extends ArrayAdapter<CustomData> {
-    private final Activity context;
     public static ArrayList<CustomData> favoriteChannels;
-    private ImageView streamView;
     public static String streamUrl;
+    private final Activity context;
+    private ImageView streamView;
     private ImageLoader imageLoader;
 
 
@@ -32,7 +36,7 @@ public class CustomListFavChannels extends ArrayAdapter<CustomData> {
         this.favoriteChannels = favoriteChannels;
     }
 
-    public void initImageLoader(){
+    public void initImageLoader() {
 
         File cacheDir = StorageUtils.getCacheDirectory(context, Boolean.parseBoolean("UniversalImageLoader/Cache"));
 
@@ -42,7 +46,7 @@ public class CustomListFavChannels extends ArrayAdapter<CustomData> {
                 .discCacheFileNameGenerator(new Md5FileNameGenerator())
                 .discCache(new UnlimitedDiscCache(cacheDir))
                 .tasksProcessingOrder(QueueProcessingType.LIFO)
-         //       .writeDebugLogs ()
+                        //       .writeDebugLogs ()
                 .build();
         // Initialize ImageLoader with configuration.
         imageLoader = ImageLoader.getInstance();
@@ -69,13 +73,13 @@ public class CustomListFavChannels extends ArrayAdapter<CustomData> {
 //        // Applying font
 //        txtTitle.setTypeface(typeface);
         final ImageView imageView = (ImageView) rowView.findViewById(R.id.img);
-        if(favoriteChannels.get(position).getWeb().length() > 10){
-            txtTitle.setText(position + 1 + ": " + favoriteChannels.get(position).getWeb().substring(0,7) + "...");
-        }else {
+        if (favoriteChannels.get(position).getWeb().length() > 10) {
+            txtTitle.setText(position + 1 + ": " + favoriteChannels.get(position).getWeb().substring(0, 7) + "...");
+        } else {
             txtTitle.setText(position + 1 + ": " + favoriteChannels.get(position).getWeb());
         }
         streamUrl = favoriteChannels.get(position).getStream();
-        imageLoader.displayImage(favoriteChannels.get(position).getPicture(), imageView,options);
+        imageLoader.displayImage(favoriteChannels.get(position).getPicture(), imageView, options);
         return rowView;
     }
 

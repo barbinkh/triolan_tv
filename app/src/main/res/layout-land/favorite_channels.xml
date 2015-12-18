@@ -3,20 +3,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:background="@drawable/back_land" >
+    android:background="@drawable/back_land"
+    android:orientation="horizontal">
 
     <GridView
-        android:numColumns="7"
-        android:gravity="center"
-        android:columnWidth="125dp"
-        android:stretchMode="columnWidth"
-        android:scrollbarSize="2dp"
-        android:scrollbarThumbVertical="@drawable/gradient_linear"
+        android:id="@+id/grid_favorite"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:columnWidth="125dp"
+        android:gravity="center"
+        android:numColumns="7"
         android:paddingRight="5dp"
-        android:id="@+id/grid_favorite"
-        />
+        android:scrollbarSize="2dp"
+        android:scrollbarThumbVertical="@drawable/gradient_linear"
+        android:stretchMode="columnWidth" />
 
 </RelativeLayout>

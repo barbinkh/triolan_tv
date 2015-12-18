@@ -1,18 +1,20 @@
-package com.forwork.triolan.tab;
-
-import java.util.List;
+package com.forwork.triolan.ui.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import java.util.List;
+
 /**
  * The <code>PagerAdapter</code> serves the fragments when paging.
+ *
  * @author mwho
  */
 public class PagerAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> fragments;
+
     /**
      * @param fm
      * @param fragments
@@ -21,6 +23,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
         super(fm);
         this.fragments = fragments;
     }
+
     /* (non-Javadoc)
      * @see android.support.v4.app.FragmentPagerAdapter#getItem(int)
      */

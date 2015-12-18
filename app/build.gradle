@@ -63,12 +63,17 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.+'
     compile 'com.android.support:recyclerview-v7:21.0.+'
+    compile 'com.purplebrain.adbuddiz.sdk:AdBuddiz-Java:3.+'
     compile files('universal-image-loader-1.9.3.jar')
     compile files('gson-2.3.jar')
     compile files('commons-io-2.3.jar')
     compile files('triolanapi.jar')
 }
-
+repositories {
+    maven {
+        url 'http://repository.adbuddiz.com/maven'
+    }
+}
 
 
 

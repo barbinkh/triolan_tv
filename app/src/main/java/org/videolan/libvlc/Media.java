@@ -1,18 +1,18 @@
 /*****************************************************************************
  * Media.java
- *****************************************************************************
+ * ****************************************************************************
  * Copyright © 2011-2013 VLC authors and VideoLAN
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
@@ -35,6 +35,10 @@ public class Media implements Comparable<Media> {
     public final static HashSet<String> AUDIO_EXTENSIONS;
     public final static String EXTENSIONS_REGEX;
     public final static HashSet<String> FOLDER_BLACKLIST;
+    public final static int TYPE_ALL = -1;
+    public final static int TYPE_VIDEO = 0;
+    public final static int TYPE_AUDIO = 1;
+    public final static int TYPE_GROUP = 2;
 
     static {
         String[] video_extensions = {
@@ -89,11 +93,7 @@ public class Media implements Comparable<Media> {
             FOLDER_BLACKLIST.add(android.os.Environment.getExternalStorageDirectory().getPath() + item);
     }
 
-    public final static int TYPE_ALL = -1;
-    public final static int TYPE_VIDEO = 0;
-    public final static int TYPE_AUDIO = 1;
-    public final static int TYPE_GROUP = 2;
-
+    private final String mLocation;
     /**
      * Metadata from libvlc_media
      */
@@ -112,8 +112,6 @@ public class Media implements Comparable<Media> {
     private String mEncodedBy;
     private String mTrackID;
     private String mArtworkURL;
-
-    private final String mLocation;
     private String mFilename;
     private long mTime = 0;
     private int mAudioTrack = -1;
@@ -143,45 +141,6 @@ public class Media implements Comparable<Media> {
         extractTrackInfo(tracks);
     }
 
-    private void extractTrackInfo(TrackInfo[] tracks) {
-        if (tracks == null)
-            return;
-
-        for (TrackInfo track : tracks) {
-            if (track.Type == TrackInfo.TYPE_VIDEO) {
-                mType = TYPE_VIDEO;
-                mWidth = track.Width;
-                mHeight = track.Height;
-            } else if (mType == TYPE_ALL && track.Type == TrackInfo.TYPE_AUDIO) {
-                mType = TYPE_AUDIO;
-            } else if (track.Type == TrackInfo.TYPE_META) {
-                mLength = track.Length;
-                mTitle = track.Title;
-                mArtist = getValueWrapper(track.Artist, UnknownStringType.Artist);
-                mAlbum = getValueWrapper(track.Album, UnknownStringType.Album);
-                mGenre = getValueWrapper(track.Genre, UnknownStringType.Genre);
-                mArtworkURL = track.ArtworkURL;
-                Log.d(TAG, "Title " + mTitle);
-                Log.d(TAG, "Artist " + mArtist);
-                Log.d(TAG, "Genre " + mGenre);
-                Log.d(TAG, "Album " + mAlbum);
-            }
-        }
-
-        /* No useful ES found */
-        if (mType == TYPE_ALL) {
-            int dotIndex = mLocation.lastIndexOf(".");
-            if (dotIndex != -1) {
-                String fileExt = mLocation.substring(dotIndex);
-                if (Media.VIDEO_EXTENSIONS.contains(fileExt)) {
-                    mType = TYPE_VIDEO;
-                } else if (Media.AUDIO_EXTENSIONS.contains(fileExt)) {
-                    mType = TYPE_AUDIO;
-                }
-            }
-        }
-    }
-
     public Media(String location, long time, long length, int type,
                  Bitmap picture, String title, String artist, String genre, String album,
                  int width, int height, String artworkURL, int audio, int spu) {
@@ -202,10 +161,6 @@ public class Media implements Comparable<Media> {
         mAlbum = getValueWrapper(album, UnknownStringType.Album);
         mArtworkURL = artworkURL;
     }
-
-    private enum UnknownStringType {Artist, Genre, Album}
-
-    ;
 
     /**
      * Uses introspection to read VLC l10n databases, so that we can sever the
@@ -261,6 +216,47 @@ public class Media implements Comparable<Media> {
                 return "Unknown Artist";
         }
     }
+
+    private void extractTrackInfo(TrackInfo[] tracks) {
+        if (tracks == null)
+            return;
+
+        for (TrackInfo track : tracks) {
+            if (track.Type == TrackInfo.TYPE_VIDEO) {
+                mType = TYPE_VIDEO;
+                mWidth = track.Width;
+                mHeight = track.Height;
+            } else if (mType == TYPE_ALL && track.Type == TrackInfo.TYPE_AUDIO) {
+                mType = TYPE_AUDIO;
+            } else if (track.Type == TrackInfo.TYPE_META) {
+                mLength = track.Length;
+                mTitle = track.Title;
+                mArtist = getValueWrapper(track.Artist, UnknownStringType.Artist);
+                mAlbum = getValueWrapper(track.Album, UnknownStringType.Album);
+                mGenre = getValueWrapper(track.Genre, UnknownStringType.Genre);
+                mArtworkURL = track.ArtworkURL;
+                Log.d(TAG, "Title " + mTitle);
+                Log.d(TAG, "Artist " + mArtist);
+                Log.d(TAG, "Genre " + mGenre);
+                Log.d(TAG, "Album " + mAlbum);
+            }
+        }
+
+        /* No useful ES found */
+        if (mType == TYPE_ALL) {
+            int dotIndex = mLocation.lastIndexOf(".");
+            if (dotIndex != -1) {
+                String fileExt = mLocation.substring(dotIndex);
+                if (Media.VIDEO_EXTENSIONS.contains(fileExt)) {
+                    mType = TYPE_VIDEO;
+                } else if (Media.AUDIO_EXTENSIONS.contains(fileExt)) {
+                    mType = TYPE_AUDIO;
+                }
+            }
+        }
+    }
+
+    ;
 
     /**
      * Compare the filenames to sort items
@@ -432,4 +428,6 @@ public class Media implements Comparable<Media> {
     public String getArtworkURL() {
         return mArtworkURL;
     }
+
+    private enum UnknownStringType {Artist, Genre, Album}
 }

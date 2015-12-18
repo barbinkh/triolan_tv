@@ -1,18 +1,18 @@
 /*****************************************************************************
  * LibVlcUtil.java
- *****************************************************************************
+ * ****************************************************************************
  * Copyright © 2011-2013 VLC authors and VideoLAN
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2.1 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
@@ -37,6 +37,22 @@ import java.util.Locale;
 
 public class LibVlcUtil {
     public final static String TAG = "VLC/LibVLC/Util";
+    private static final int EM_386 = 3;
+    private static final int EM_MIPS = 8;
+    private static final int EM_ARM = 40;
+    private static final int ELF_HEADER_SIZE = 52;
+    private static final int SECTION_HEADER_SIZE = 40;
+    private static final int SHT_ARM_ATTRIBUTES = 0x70000003;
+    private static String errorMsg = null;
+    private static boolean isCompatible = false;
+    private static MachineSpecs machineSpecs = null;
+    /**
+     * '*' prefix means it's unsupported
+     */
+    private static String[] CPU_archs = {"*Pre-v4", "*v4", "*v4T",
+            "v5T", "v5TE", "v5TEJ",
+            "v6", "v6KZ", "v6T2", "v6K", "v7",
+            "*v6-M", "*v6S-M", "*v7E-M", "*v8"};
 
     public static boolean isFroyoOrLater() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO;
@@ -65,9 +81,6 @@ public class LibVlcUtil {
     public static boolean isJellyBeanMR2OrLater() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
     }
-
-    private static String errorMsg = null;
-    private static boolean isCompatible = false;
 
     public static String getErrorMsg() {
         return errorMsg;
@@ -220,45 +233,6 @@ public class LibVlcUtil {
     public static MachineSpecs getMachineSpecs() {
         return machineSpecs;
     }
-
-    private static MachineSpecs machineSpecs = null;
-
-    public static class MachineSpecs {
-        public boolean hasNeon;
-        public boolean hasFpu;
-        public boolean hasArmV6;
-        public boolean hasArmV7;
-        public boolean hasMips;
-        public boolean hasX86;
-        public float bogoMIPS;
-        public int processors;
-    }
-
-    private static final int EM_386 = 3;
-    private static final int EM_MIPS = 8;
-    private static final int EM_ARM = 40;
-    private static final int ELF_HEADER_SIZE = 52;
-    private static final int SECTION_HEADER_SIZE = 40;
-    private static final int SHT_ARM_ATTRIBUTES = 0x70000003;
-
-    private static class ElfData {
-        ByteOrder order;
-        int e_machine;
-        int e_shoff;
-        int e_shnum;
-        int sh_offset;
-        int sh_size;
-        String att_arch;
-        boolean att_fpu;
-    }
-
-    /**
-     * '*' prefix means it's unsupported
-     */
-    private static String[] CPU_archs = {"*Pre-v4", "*v4", "*v4T",
-            "v5T", "v5TE", "v5TEJ",
-            "v6", "v6KZ", "v6T2", "v6K", "v7",
-            "*v6-M", "*v6S-M", "*v7E-M", "*v8"};
 
     private static ElfData readLib(String path) {
         File file = new File(path);
@@ -433,5 +407,27 @@ public class LibVlcUtil {
         } while ((c & 0x80) > 0);
 
         return ret;
+    }
+
+    public static class MachineSpecs {
+        public boolean hasNeon;
+        public boolean hasFpu;
+        public boolean hasArmV6;
+        public boolean hasArmV7;
+        public boolean hasMips;
+        public boolean hasX86;
+        public float bogoMIPS;
+        public int processors;
+    }
+
+    private static class ElfData {
+        ByteOrder order;
+        int e_machine;
+        int e_shoff;
+        int e_shnum;
+        int sh_offset;
+        int sh_size;
+        String att_arch;
+        boolean att_fpu;
     }
 }

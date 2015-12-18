@@ -1,18 +1,18 @@
 /*****************************************************************************
  * LibVLC.java
- *****************************************************************************
+ * ****************************************************************************
  * Copyright © 2010-2013 VLC authors and VideoLAN
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2.1 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
@@ -29,74 +29,17 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class LibVLC {
-    private static final String TAG = "VLC/LibVLC";
     public static final int AOUT_AUDIOTRACK_JAVA = 0;
     public static final int AOUT_AUDIOTRACK = 1;
     public static final int AOUT_OPENSLES = 2;
-
     public static final int VOUT_ANDROID_SURFACE = 0;
     public static final int VOUT_OPEGLES2 = 1;
-
     public static final int HW_ACCELERATION_AUTOMATIC = -1;
     public static final int HW_ACCELERATION_DISABLED = 0;
     public static final int HW_ACCELERATION_DECODING = 1;
     public static final int HW_ACCELERATION_FULL = 2;
-
+    private static final String TAG = "VLC/LibVLC";
     private static LibVLC sInstance;
-
-    /**
-     * libVLC instance C pointer
-     */
-    private long mLibVlcInstance = 0; // Read-only, reserved for JNI
-    /**
-     * libvlc_media_player pointer and index
-     */
-    private int mInternalMediaPlayerIndex = 0; // Read-only, reserved for JNI
-    private long mInternalMediaPlayerInstance = 0; // Read-only, reserved for JNI
-
-    private MediaList mMediaList; // Pointer to media list being followed
-    private MediaList mPrimaryList; // Primary/default media list; see getPrimaryMediaList()
-
-    /**
-     * Buffer for VLC messages
-     */
-    private StringBuffer mDebugLogBuffer;
-    private boolean mIsBufferingLog = false;
-
-    private Aout mAout;
-
-    /** Keep screen bright */
-    //private WakeLock mWakeLock;
-
-    /**
-     * Settings
-     */
-    private int hardwareAcceleration = HW_ACCELERATION_AUTOMATIC;
-    private String subtitlesEncoding = "";
-    private int aout = LibVlcUtil.isGingerbreadOrLater() ? AOUT_OPENSLES : AOUT_AUDIOTRACK_JAVA;
-    private int vout = VOUT_ANDROID_SURFACE;
-    private boolean timeStretching = false;
-    private int deblocking = -1;
-    private String chroma = "";
-    private boolean verboseMode = true;
-    private float[] equalizer = null;
-    private boolean frameSkip = false;
-    private int networkCaching = 0;
-
-    /**
-     * Check in libVLC already initialized otherwise crash
-     */
-    private boolean mIsInitialized = false;
-
-    public native void attachSurface(Surface surface, IVideoPlayer player);
-
-    public native void detachSurface();
-
-    public native void attachSubtitlesSurface(Surface surface);
-
-    public native void detachSubtitlesSurface();
-
-    public native void eventVideoPlayerActivityCreated(boolean created);
 
     /* Load library before object instantiation */
     static {
@@ -121,6 +64,53 @@ public class LibVLC {
             /// FIXME Alert user
             System.exit(1);
         }
+    }
+
+    /**
+     * libVLC instance C pointer
+     */
+    private long mLibVlcInstance = 0; // Read-only, reserved for JNI
+    /**
+     * libvlc_media_player pointer and index
+     */
+    private int mInternalMediaPlayerIndex = 0; // Read-only, reserved for JNI
+    private long mInternalMediaPlayerInstance = 0; // Read-only, reserved for JNI
+    private MediaList mMediaList; // Pointer to media list being followed
+    private MediaList mPrimaryList; // Primary/default media list; see getPrimaryMediaList()
+    /**
+     * Buffer for VLC messages
+     */
+    private StringBuffer mDebugLogBuffer;
+    private boolean mIsBufferingLog = false;
+
+    /** Keep screen bright */
+    //private WakeLock mWakeLock;
+    private Aout mAout;
+    /**
+     * Settings
+     */
+    private int hardwareAcceleration = HW_ACCELERATION_AUTOMATIC;
+    private String subtitlesEncoding = "";
+    private int aout = LibVlcUtil.isGingerbreadOrLater() ? AOUT_OPENSLES : AOUT_AUDIOTRACK_JAVA;
+    private int vout = VOUT_ANDROID_SURFACE;
+    private boolean timeStretching = false;
+    private int deblocking = -1;
+    private String chroma = "";
+    private boolean verboseMode = true;
+    private float[] equalizer = null;
+    private boolean frameSkip = false;
+    private int networkCaching = 0;
+    /**
+     * Check in libVLC already initialized otherwise crash
+     */
+    private boolean mIsInitialized = false;
+
+    /**
+     * Constructor
+     * It is private because this class is a singleton.
+     */
+    private LibVLC() {
+        mAout = new Aout();
     }
 
     /**
@@ -153,13 +143,45 @@ public class LibVLC {
         }
     }
 
-    /**
-     * Constructor
-     * It is private because this class is a singleton.
-     */
-    private LibVLC() {
-        mAout = new Aout();
+    public static synchronized void restart(Context context) {
+        if (sInstance != null) {
+            try {
+                sInstance.destroy();
+                sInstance.init(context);
+            } catch (LibVlcException lve) {
+                Log.e(TAG, "Unable to reinit libvlc: " + lve);
+            }
+        }
     }
+
+    public static native String nativeToURI(String path);
+
+    /**
+     * Quickly converts path to URIs, which are mandatory in libVLC.
+     *
+     * @param path The path to be converted.
+     * @return A URI representation of path
+     */
+    public static String PathToURI(String path) {
+        if (path == null) {
+            throw new NullPointerException("Cannot convert null path!");
+        }
+        return LibVLC.nativeToURI(path);
+    }
+
+    public static native void nativeReadDirectory(String path, ArrayList<String> res);
+
+    public native static boolean nativeIsPathDirectory(String path);
+
+    public native void attachSurface(Surface surface, IVideoPlayer player);
+
+    public native void detachSurface();
+
+    public native void attachSubtitlesSurface(Surface surface);
+
+    public native void detachSubtitlesSurface();
+
+    public native void eventVideoPlayerActivityCreated(boolean created);
 
     /**
      * Destructor:
@@ -223,17 +245,6 @@ public class LibVLC {
      * @param f the surface to draw
      */
     public native void setSurface(Surface f);
-
-    public static synchronized void restart(Context context) {
-        if (sInstance != null) {
-            try {
-                sInstance.destroy();
-                sInstance.init(context);
-            } catch (LibVlcException lve) {
-                Log.e(TAG, "Unable to reinit libvlc: " + lve);
-            }
-        }
-    }
 
     /**
      * those get/is* are called from native code to get settings values.
@@ -480,16 +491,16 @@ public class LibVLC {
     }
 
     /**
+     * Get the current playback speed
+     */
+    public native float getRate();
+
+    /**
      * Sets the speed of playback (1 being normal speed, 2 being twice as fast)
      *
      * @param rate
      */
     public native void setRate(float rate);
-
-    /**
-     * Get the current playback speed
-     */
-    public native float getRate();
 
     /**
      * Initialize the libvlc C library
@@ -658,25 +669,6 @@ public class LibVLC {
     public native int setSpuTrack(int index);
 
     public native int getSpuTracksCount();
-
-    public static native String nativeToURI(String path);
-
-    /**
-     * Quickly converts path to URIs, which are mandatory in libVLC.
-     *
-     * @param path The path to be converted.
-     * @return A URI representation of path
-     */
-    public static String PathToURI(String path) {
-        if (path == null) {
-            throw new NullPointerException("Cannot convert null path!");
-        }
-        return LibVLC.nativeToURI(path);
-    }
-
-    public static native void nativeReadDirectory(String path, ArrayList<String> res);
-
-    public native static boolean nativeIsPathDirectory(String path);
 
     /**
      * Expand and continue playing the current media.

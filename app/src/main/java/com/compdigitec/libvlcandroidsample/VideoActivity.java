@@ -17,10 +17,9 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.forwork.triolan.CustomData;
-import com.forwork.triolan.CustomList;
-import com.forwork.triolan.OnSwipeTouchListener;
 import com.forwork.triolan.R;
+import com.forwork.triolan.model.CustomData;
+import com.forwork.triolan.ui.listener.OnSwipeTouchListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -30,13 +29,9 @@ import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaList;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class VideoActivity extends FragmentActivity implements SurfaceHolder.Callback,
         IVideoPlayer {
@@ -44,25 +39,28 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     public final static String TAG = "LibVLCAndroidSample/VideoActivity";
     //public static String LOCATION = "com.compdigitec.libvlcandroidsample.VideoActivity.location";
     //public static String LOCATION_SOUND = "com.compdigitec.libvlcandroidsample.VideoActivity.location";
-
-    public String mFilePath = "0";
+    private final static int VideoSizeChanged = -1;
     //private String mFilePath_sound = "0";
-
+    private static final String DATA_CHANNELS = "DataChannels";
+    public String mFilePath = "0";
     // display surface
     private SurfaceView mSurface;
     private SurfaceHolder holder;
-
     // media player
     private LibVLC libvlc;
     private int mVideoWidth;
     private int mVideoHeight;
-    private final static int VideoSizeChanged = -1;
     private ArrayList<CustomData> objects = new ArrayList<CustomData>();
     private SharedPreferences sPref;
     private Button hwDecoding;
-    private static final String DATA_CHANNELS = "DataChannels";
     //  ProgressDialog pd;
+    /**
+     * **********
+     * Events
+     * ***********
+     */
 
+    private Handler mHandler = new MyHandler(this);
 
     /**
      * **********
@@ -193,7 +191,6 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         setSize(mVideoWidth, mVideoHeight);
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -208,20 +205,6 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
             Toast.makeText(VideoActivity.this, "Канал временно не доступен", Toast.LENGTH_LONG).show();
         }
 
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        try {
-
-            libvlc.stop();
-
-        } catch (Exception e) {
-            Toast.makeText(VideoActivity.this, "Ошибка воспроизведения,обновите канал", Toast.LENGTH_LONG).show();
-        }
-
-        //finish();
     }
 
 
@@ -240,6 +223,20 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
 //        // releasePlayer();
 //        //finish();
 //    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        try {
+
+            libvlc.stop();
+
+        } catch (Exception e) {
+            Toast.makeText(VideoActivity.this, "Ошибка воспроизведения,обновите канал", Toast.LENGTH_LONG).show();
+        }
+
+        //finish();
+    }
 
     @Override
     public void onDestroy() {
@@ -361,21 +358,6 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         libvlc.pause();
     }
 
-    private void releasePlayer() {
-        if (libvlc == null)
-            return;
-        EventHandler.getInstance().removeHandler(mHandler);
-        libvlc.closeAout();
-        libvlc.stop();
-        libvlc.detachSurface();
-        holder = null;
-        libvlc.destroy();
-        libvlc = null;
-
-        mVideoWidth = 0;
-        mVideoHeight = 0;
-    }
-
 
 /*    private boolean validateLocation(String location)
     {
@@ -396,14 +378,20 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         return true;
     } */
 
+    private void releasePlayer() {
+        if (libvlc == null)
+            return;
+        EventHandler.getInstance().removeHandler(mHandler);
+        libvlc.closeAout();
+        libvlc.stop();
+        libvlc.detachSurface();
+        holder = null;
+        libvlc.destroy();
+        libvlc = null;
 
-    /**
-     * **********
-     * Events
-     * ***********
-     */
-
-    private Handler mHandler = new MyHandler(this);
+        mVideoWidth = 0;
+        mVideoHeight = 0;
+    }
 
     private static class MyHandler extends Handler {
         private WeakReference<VideoActivity> mOwner;

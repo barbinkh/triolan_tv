@@ -1,13 +1,16 @@
-package com.forwork.triolan;
+package com.forwork.triolan.helper;
+
 import android.util.Log;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class CheckConnection {
 
-    final static String TAG ="mylog";
+    final static String TAG = "mylog";
     Thread t2, t3;
-    int existInternet =0;
+    int existInternet = 0;
+
     public boolean CheckConnect() {
 
         Log.d(TAG, "---- start---------");
@@ -45,26 +48,26 @@ public class CheckConnection {
             e.printStackTrace();
         }
         Log.d(TAG, "----Main internet: " + existInternet);
-        if (existInternet == 1){
-          return true;
-        }
-        else {
+        if (existInternet == 1) {
+            return true;
+        } else {
             return false;
         }
     }
 
-    public void checkConnectivity(String url)  {
-        try{
+    public void checkConnectivity(String url) {
+        try {
             HttpURLConnection.setFollowRedirects(false);
-            HttpURLConnection conn = (HttpURLConnection)new URL(url).openConnection();
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             // conn.setRequestMethod("HEAD");
             conn.setRequestMethod("GET");
-            if(conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 existInternet = 1; // интернет есть
             }
 
-        }catch(Exception e) {
+        } catch (Exception e) {
             Log.d(TAG, "error: " + e); // на ошибку можно не обращать внимание
         }
 
-    }}
+    }
+}
