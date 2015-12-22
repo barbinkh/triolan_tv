@@ -11,4 +11,4 @@
     android:paddingRight="5dp"
     android:scrollbarSize="2dp"
     android:scrollbarThumbVertical="@drawable/gradient_linear"
-    android:stretchMode="columnWidth"></GridView>
+    android:stretchMode="columnWidth"/>

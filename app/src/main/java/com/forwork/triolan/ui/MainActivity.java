@@ -1,6 +1,8 @@
 package com.forwork.triolan.ui;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -100,7 +102,7 @@ public class MainActivity extends ActionBarActivity implements TabHost.OnTabChan
     protected void onResume() {
         super.onResume();
         countResume++;
-        if(countResume>3){
+        if(countResume>10){
             countResume = 0;
             AdBuddiz.showAd(this);
         }
@@ -205,6 +207,18 @@ public class MainActivity extends ActionBarActivity implements TabHost.OnTabChan
     public void onPageScrollStateChanged(int state) {
         // TODO Auto-generated method stub
 
+    }
+
+    public void moveToFireBounce(View view) {
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.dad_team.firebounce2d")));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.dad_team.firebounce2d")));
+        }
+    }
+
+    public void removeFireBounce(View view) {
+        findViewById(R.id.activity_main_fire_bounce_view).setVisibility(View.GONE);
     }
 
     /**
