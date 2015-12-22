@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.forwork.triolan.R;
+import com.forwork.triolan.main.TriolanAPI;
 import com.forwork.triolan.model.CustomData;
 import com.forwork.triolan.ui.listener.OnSwipeTouchListener;
 import com.google.gson.Gson;
@@ -89,6 +90,7 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sample);
+        ((TriolanAPI)getApplication()).trackScreenView("Main menu");
         playStop = (ImageButton) findViewById(R.id.sample_play_stop_button);
         next = (ImageButton) findViewById(R.id.sample_next_button);
         back = (ImageButton) findViewById(R.id.sample_back_button);

@@ -14,6 +14,7 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabContentFactory;
 
 import com.forwork.triolan.R;
+import com.forwork.triolan.main.TriolanAPI;
 import com.forwork.triolan.ui.adapter.CustomListFavChannels;
 import com.forwork.triolan.ui.adapter.PagerAdapter;
 import com.forwork.triolan.ui.fragment.Channels;
@@ -85,7 +86,7 @@ public class MainActivity extends ActionBarActivity implements TabHost.OnTabChan
             setSupportActionBar(toolbar);
         }
 
-
+        ((TriolanAPI)getApplication()).trackScreenView("Main menu");
         // Initialise the TabHost
         this.initialiseTabHost(savedInstanceState);
         if (savedInstanceState != null) {
