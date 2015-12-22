@@ -16,6 +16,7 @@ import com.forwork.triolan.ui.adapter.CustomListFavChannels;
 import com.forwork.triolan.ui.adapter.PagerAdapter;
 import com.forwork.triolan.ui.fragment.Channels;
 import com.forwork.triolan.ui.fragment.FavoriteChannels;
+import com.purplebrain.adbuddiz.sdk.AdBuddiz;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ public class MainActivity extends ActionBarActivity implements TabHost.OnTabChan
     private ViewPager mViewPager;
     private HashMap<String, TabInfo> mapTabInfo = new HashMap<String, MainActivity.TabInfo>();
     private PagerAdapter mPagerAdapter;
+    private int countResume ;
 
 
 //    @Override
@@ -90,10 +92,20 @@ public class MainActivity extends ActionBarActivity implements TabHost.OnTabChan
         }
         // Intialise ViewPager
         this.intialiseViewPager();
+        countResume = 0;
+        AdBuddiz.cacheAds(this);
     }
 
-
-//        @Override
+    @Override
+    protected void onResume() {
+        super.onResume();
+        countResume++;
+        if(countResume>3){
+            countResume = 0;
+            AdBuddiz.showAd(this);
+        }
+    }
+    //        @Override
 //        public boolean onCreateOptionsMenu(Menu menu) {
 //            getMenuInflater().inflate(R.menu.main_activity_action, menu);
 //

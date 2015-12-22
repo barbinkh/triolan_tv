@@ -78,7 +78,11 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         pd.show(); */
 
         Intent intent = getIntent();
-        mFilePath = intent.getExtras().getString("LOCATION");
+        if (intent.getExtras() != null) {
+            mFilePath = intent.getExtras().getString("LOCATION");
+        }else{
+            mFilePath = "";
+        }
         loadDataChannels();
         //mFilePath_sound = intent.getExtras().getString("LOCATION_SOUND");
 

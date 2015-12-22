@@ -180,7 +180,7 @@ public class Channels extends Fragment {
         progressBar.setMessage("Загрузка каналов...");
         progressBar.show();
 
-        Backend.get(ApiCore.getAlacarteAddress("GetCustomerPlaylist_Free_HTTP"))    // Отправка SOAP запроса на сервайс
+        Backend.get(ApiCore.getAlacarteAddress("GetCustomerPlaylists_Free_HTTP"))    // Отправка SOAP запроса на сервайс
                 .onComplete(new Backend.BackendMethod.OnCompleteListener<GetCustomerPlaylistData>() {     // Получение JSON объекта в виде структуры класса GetCustomerPlaylistData
                     @Override
                     public void onComplete(
