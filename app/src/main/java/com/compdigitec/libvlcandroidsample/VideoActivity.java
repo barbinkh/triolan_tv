@@ -15,6 +15,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.forwork.triolan.R;
@@ -53,6 +54,11 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     private ArrayList<CustomData> objects = new ArrayList<CustomData>();
     private SharedPreferences sPref;
     private Button hwDecoding;
+    private ImageButton playStop;
+    private ImageButton back;
+    private ImageButton next;
+    private ImageButton reSize;
+
     //  ProgressDialog pd;
     /**
      * **********
@@ -71,7 +77,12 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sample);
+        playStop = (ImageButton) findViewById(R.id.sample_play_stop_button);
+        next = (ImageButton) findViewById(R.id.sample_next_button);
+        back = (ImageButton) findViewById(R.id.sample_back_button);
+        reSize = (ImageButton) findViewById(R.id.sample_change_size_button);
 
+        next.setOnClickListener(view->);
       /*  pd = new ProgressDialog(this);
         pd.setProgressStyle(R.id.progress_circular);
         pd.setMessage("Загрузка потока...");
@@ -80,7 +91,7 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
             mFilePath = intent.getExtras().getString("LOCATION");
-        }else{
+        } else {
             mFilePath = "";
         }
         loadDataChannels();
