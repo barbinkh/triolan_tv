@@ -25,6 +25,12 @@
 
             android:windowSoftInputMode="stateHidden">
 
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.SEARCH" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -34,12 +40,6 @@
             android:process="com.forwork.triolan.VideoActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppThemeTriolan" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.SEARCH" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
 

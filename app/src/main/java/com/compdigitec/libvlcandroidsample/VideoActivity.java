@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -58,7 +59,8 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     private ImageButton back;
     private ImageButton next;
     private ImageButton reSize;
-
+    private Run animation;
+    private boolean statusSize;
     //  ProgressDialog pd;
     /**
      * **********
@@ -68,11 +70,21 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
 
     private Handler mHandler = new MyHandler(this);
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (animation != null) {
+            animation.show();
+        }
+        return super.dispatchTouchEvent(ev);
+
+    }
+
     /**
      * **********
      * Activity
      * ***********
      */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,15 +93,25 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         next = (ImageButton) findViewById(R.id.sample_next_button);
         back = (ImageButton) findViewById(R.id.sample_back_button);
         reSize = (ImageButton) findViewById(R.id.sample_change_size_button);
-
-        next.setOnClickListener(view ->skipNext());
+        playStop.setOnClickListener(view1 -> {
+            if (libvlc.isPlaying()) {
+                libvlc.pause();
+                playStop.setBackgroundResource(R.drawable.ic_play_arrow_white_48dp);
+            } else {
+                libvlc.play();
+                playStop.setBackgroundResource(R.drawable.ic_stop_white_48dp);
+            }
+        });
+        next.setOnClickListener(view -> skipNext());
         back.setOnClickListener(view -> skipPrevisions());
-
+        reSize.setOnClickListener(view -> setSize(mVideoWidth, mVideoHeight));
+        animation = new Run(findViewById(R.id.sample_control_layout));
+        animation.show();
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
             mFilePath = intent.getExtras().getString("LOCATION");
         } else {
-            mFilePath = "";
+            mFilePath = "http://109.86.150.252:8888/udp/238.0.0.19:1234";
         }
         loadDataChannels();
         //mFilePath_sound = intent.getExtras().getString("LOCATION_SOUND");
@@ -113,7 +135,6 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         } catch (Exception e) {
             Toast.makeText(VideoActivity.this, "Ваше устройство не может воспроизвести канал", Toast.LENGTH_SHORT).show();
         }
-
 
         mSurface.setOnTouchListener(new OnSwipeTouchListener(this) {
             public void onSwipeTop() {
@@ -211,6 +232,7 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     }
 
     private void setSize(int width, int height) {
+        statusSize = !statusSize;
         mVideoWidth = width;
         mVideoHeight = height;
         if (mVideoWidth * mVideoHeight <= 0)
@@ -220,26 +242,27 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         int w = getWindow().getDecorView().getWidth();
         int h = getWindow().getDecorView().getHeight();
 
-        // getWindow().getDecorView() doesn't always take orientation into
-        // account, we have to correct the values
+        if (statusSize) {
+            // getWindow().getDecorView() doesn't always take orientation into
+            // account, we have to correct the values
 
      /* Раскомментируйте код ниже для пропорционального отображения видео-потока */
 
-   /*     boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-        if (w > h && isPortrait || w < h && !isPortrait) {
-            int i = w;
-            w = h;
-            h = i;
+            boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+            if (w > h && isPortrait || w < h && !isPortrait) {
+                int i = w;
+                w = h;
+                h = i;
+            }
+
+            float videoAR = (float) mVideoWidth / (float) mVideoHeight;
+            float screenAR = (float) w / (float) h;
+
+            if (screenAR < videoAR)
+                h = (int) (w / videoAR);
+            else
+                w = (int) (h * videoAR);
         }
-
-        float videoAR = (float) mVideoWidth / (float) mVideoHeight;
-        float screenAR = (float) w / (float) h;
-
-        if (screenAR < videoAR)
-            h = (int) (w / videoAR);
-        else
-            w = (int) (h * videoAR); */
-
 
         // force surface buffer size
         if (holder != null)
@@ -269,12 +292,7 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     private void createPlayer(String media, final String media_sound) {
         //releasePlayer();
         try {
-            if (media.length() > 0) {
-                /*Toast toast = (this, media, Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0,
-                        0);
-                toast.show();*/
-            }
+
             // Create a new media player
             libvlc = LibVLC.getInstance();
             libvlc.setHardwareAcceleration(LibVLC.HW_ACCELERATION_DISABLED);
@@ -304,7 +322,7 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
             return;
         libvlc.pause();
     }
- 
+
     private void releasePlayer() {
         if (libvlc == null)
             return;
@@ -394,4 +412,51 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         }
         libvlc.playMRL(mFilePath);
     }
+
+
+    private class Run implements Runnable {
+        private int statusAnimation;
+        private Handler handler;
+        private View view;
+
+        public Run(View view) {
+            this.view = view;
+            handler = new Handler(Looper.myLooper());
+        }
+
+        public void show() {
+            statusAnimation = 0;
+            handler.removeCallbacks(this);
+            run();
+            view.setEnabled(true);
+        }
+
+        @Override
+        public void run() {
+            switch (statusAnimation) {
+                case 0: {
+
+                    view.setAlpha(view.getAlpha() + 0.04f > 1 ? 1f : view.getAlpha() + 0.04f);
+                    if (view.getAlpha() == 1) {
+                        statusAnimation++;
+                        handler.postDelayed(this, 7000);
+                    } else {
+                        handler.postDelayed(this, 25);
+                    }
+                    break;
+                }
+                case 1: {
+                    view.setAlpha(view.getAlpha() - 0.01f < 0 ? 0f : view.getAlpha() - 0.01f);
+                    if (view.getAlpha() == 0) {
+                        statusAnimation++;
+                        view.setEnabled(false);
+                    } else {
+                        handler.postDelayed(this, 25);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
 }
