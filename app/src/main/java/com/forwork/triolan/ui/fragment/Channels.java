@@ -186,35 +186,38 @@ public class Channels extends Fragment {
                     public void onComplete(
                             GetCustomerPlaylistData getCustomerPlaylistData) {
 
-                        CustomList.objects = new ArrayList<CustomData>();
-                        GetCustomerPlaylistData.GetCustomerPlaylistDataD.ChannelInfo logotip = getCustomerPlaylistData.d.Channels
-                                .get(0);
+                        if (getCustomerPlaylistData.d.Channels.size() > 0) {
+                            CustomList.objects = new ArrayList<CustomData>();
+                            GetCustomerPlaylistData.GetCustomerPlaylistDataD.ChannelInfo logotip = getCustomerPlaylistData.d.Channels
+                                    .get(0);
 
-                        Log.d("ArrayList Size = ", ""
-                                + getCustomerPlaylistData.d.Channels.size());
-                        Log.d("Channel Logo =", "" + logotip.Logo);
+                            Log.d("ArrayList Size = ", ""
+                                    + getCustomerPlaylistData.d.Channels.size());
+                            Log.d("Channel Logo =", "" + logotip.Logo);
 
 
-                        for (int i = 0; i < getCustomerPlaylistData.d.Channels       // Добавление имени, логотипа и ссылки на видео поток для дальнейшего использования
-                                .size(); i++) {
-                            // при создании адаптера и слайдера отображения каналов
-                            CustomList.objects.add(new CustomData(
-                                    getCustomerPlaylistData.d.Channels.get(i).ID,
-                                    getCustomerPlaylistData.d.Channels.get(i).Name,
-                                    getCustomerPlaylistData.d.Channels.get(i).Logo,
-                                    getCustomerPlaylistData.d.Channels.get(i).Stream.replace("80.73.2.3:8888", "109.86.150.252:8888")));
+                            for (int i = 0; i < getCustomerPlaylistData.d.Channels       // Добавление имени, логотипа и ссылки на видео поток для дальнейшего использования
+                                    .size(); i++) {
+                                // при создании адаптера и слайдера отображения каналов
+                                CustomList.objects.add(new CustomData(
+                                        getCustomerPlaylistData.d.Channels.get(i).ID,
+                                        getCustomerPlaylistData.d.Channels.get(i).Name,
+                                        getCustomerPlaylistData.d.Channels.get(i).Logo,
+                                        getCustomerPlaylistData.d.Channels.get(i).Stream.replace("80.73.2.3:8888", "109.86.150.252:8888")));
 
+                            }
+                            CustomList.streamUrl = CustomList.objects.get(0).getStream();
+
+                            //getScreenOrientation();
+                            setupGrid();
+                            progressBar.dismiss();
+                            textConnectError.setVisibility(View.INVISIBLE);
+                            imageConnectError.setVisibility(View.INVISIBLE);
+                            clearDataChannels();
+                            saveDataChannels(CustomList.objects);
+                        }else{
+                            progressBar.dismiss();
                         }
-                        CustomList.streamUrl = CustomList.objects.get(0).getStream();
-
-                        //getScreenOrientation();
-                        setupGrid();
-                        progressBar.dismiss();
-                        textConnectError.setVisibility(View.INVISIBLE);
-                        imageConnectError.setVisibility(View.INVISIBLE);
-                        clearDataChannels();
-                        saveDataChannels(CustomList.objects);
-
                     }
 
 
