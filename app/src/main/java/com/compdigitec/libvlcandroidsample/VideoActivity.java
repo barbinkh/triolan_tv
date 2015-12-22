@@ -82,7 +82,8 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         back = (ImageButton) findViewById(R.id.sample_back_button);
         reSize = (ImageButton) findViewById(R.id.sample_change_size_button);
 
-        next.setOnClickListener(view->);
+        next.setOnClickListener(view ->skipNext());
+        back.setOnClickListener(view -> skipPrevisions());
       /*  pd = new ProgressDialog(this);
         pd.setProgressStyle(R.id.progress_circular);
         pd.setMessage("Загрузка потока...");
@@ -96,13 +97,7 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         }
         loadDataChannels();
         //mFilePath_sound = intent.getExtras().getString("LOCATION_SOUND");
-
-
         View decorView = getWindow().getDecorView();
-        // Hide both the navigation bar and the status bar.
-        // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
-        // a general rule, you should design your app to hide the status bar whenever you
-        // hide the navigation bar.
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
@@ -125,52 +120,16 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
 
 
         mSurface.setOnTouchListener(new OnSwipeTouchListener(this) {
-
             public void onSwipeTop() {
                 //   Toast.makeText(VideoActivity.this, "top", Toast.LENGTH_SHORT).show();
             }
 
             public void onSwipeRight() {
-
-                int indexClick = 0;
-                for (int i = 0; i < objects.size(); i++) {
-                    if (mFilePath.equals(objects.get(i).getStream())) {
-                        indexClick = i;
-                    }
-                }
-                if (indexClick == 0) {
-                    mFilePath = objects.get(objects.size() - 1).getStream();
-                    Toast.makeText(VideoActivity.this, objects.size() + "/" + (objects.size()) + " " + '"' + objects.get(objects.size() - 1).getWeb() + '"', Toast.LENGTH_SHORT).show();
-                } else {
-                    mFilePath = objects.get(indexClick - 1).getStream();
-                    Toast.makeText(VideoActivity.this, (indexClick) + "/" + (objects.size()) + " " + '"' + objects.get(indexClick - 1).getWeb() + '"', Toast.LENGTH_SHORT).show();
-
-                }
-                try {
-                    libvlc.playMRL(mFilePath);
-                } catch (Exception e) {
-                    Toast.makeText(VideoActivity.this, "Канал временно не доступен", Toast.LENGTH_SHORT).show();
-                }
-
+                skipPrevisions();
             }
 
             public void onSwipeLeft() {
-
-                int indexClick = 0;
-                for (int i = 0; i < objects.size(); i++) {
-                    if (mFilePath.equals(objects.get(i).getStream())) {
-                        indexClick = i;
-                    }
-                }
-                if (indexClick == objects.size() - 1) {
-                    mFilePath = objects.get(0).getStream();
-                    Toast.makeText(VideoActivity.this, 1 + "/" + (objects.size()) + " " + '"' + objects.get(0).getWeb() + '"', Toast.LENGTH_SHORT).show();
-                } else {
-                    mFilePath = objects.get(indexClick + 1).getStream();
-                    Toast.makeText(VideoActivity.this, (indexClick + 2) + "/" + (objects.size()) + " " + '"' + objects.get(indexClick + 1).getWeb() + '"', Toast.LENGTH_SHORT).show();
-
-                }
-                libvlc.playMRL(mFilePath);
+                skipNext();
             }
 
             public void onSwipeBottom() {
@@ -181,8 +140,6 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
                 return gestureDetector.onTouchEvent(event);
             }
         });
-
-
     }
 
     private void loadDataChannels() {
@@ -438,5 +395,48 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
                     break;
             }
         }
+    }
+
+    public void skipPrevisions() {
+
+        int indexClick = 0;
+        for (int i = 0; i < objects.size(); i++) {
+            if (mFilePath.equals(objects.get(i).getStream())) {
+                indexClick = i;
+            }
+        }
+        if (indexClick == 0) {
+            mFilePath = objects.get(objects.size() - 1).getStream();
+            Toast.makeText(VideoActivity.this, objects.size() + "/" + (objects.size()) + " " + '"' + objects.get(objects.size() - 1).getWeb() + '"', Toast.LENGTH_SHORT).show();
+        } else {
+            mFilePath = objects.get(indexClick - 1).getStream();
+            Toast.makeText(VideoActivity.this, (indexClick) + "/" + (objects.size()) + " " + '"' + objects.get(indexClick - 1).getWeb() + '"', Toast.LENGTH_SHORT).show();
+
+        }
+        try {
+            libvlc.playMRL(mFilePath);
+        } catch (Exception e) {
+            Toast.makeText(VideoActivity.this, "Канал временно не доступен", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void skipNext() {
+
+        int indexClick = 0;
+        for (int i = 0; i < objects.size(); i++) {
+            if (mFilePath.equals(objects.get(i).getStream())) {
+                indexClick = i;
+            }
+        }
+        if (indexClick == objects.size() - 1) {
+            mFilePath = objects.get(0).getStream();
+            Toast.makeText(VideoActivity.this, 1 + "/" + (objects.size()) + " " + '"' + objects.get(0).getWeb() + '"', Toast.LENGTH_SHORT).show();
+        } else {
+            mFilePath = objects.get(indexClick + 1).getStream();
+            Toast.makeText(VideoActivity.this, (indexClick + 2) + "/" + (objects.size()) + " " + '"' + objects.get(indexClick + 1).getWeb() + '"', Toast.LENGTH_SHORT).show();
+
+        }
+        libvlc.playMRL(mFilePath);
     }
 }
