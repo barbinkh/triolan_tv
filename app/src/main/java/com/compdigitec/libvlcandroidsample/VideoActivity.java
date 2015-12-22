@@ -90,7 +90,8 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sample);
-        ((TriolanAPI)getApplication()).trackScreenView("Main menu");
+
+        ((TriolanAPI)getApplication()).trackScreenView("Player View");
         playStop = (ImageButton) findViewById(R.id.sample_play_stop_button);
         next = (ImageButton) findViewById(R.id.sample_next_button);
         back = (ImageButton) findViewById(R.id.sample_back_button);
