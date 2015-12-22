@@ -84,10 +84,6 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
 
         next.setOnClickListener(view ->skipNext());
         back.setOnClickListener(view -> skipPrevisions());
-      /*  pd = new ProgressDialog(this);
-        pd.setProgressStyle(R.id.progress_circular);
-        pd.setMessage("Загрузка потока...");
-        pd.show(); */
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
@@ -166,11 +162,6 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     @Override
     public void onResume() {
         super.onResume();
-//        if(!validateLocation(mFilePath)) {
-//            Log.w(TAG, "Invalid location " + mFilePath);
-//            Toast.makeText(this, getResources().getString(R.string.invalid_location, mFilePath), Toast.LENGTH_SHORT);
-//
-//        }
         try {
             libvlc.playMRL(mFilePath);
         } catch (Exception e) {
@@ -179,22 +170,6 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
 
     }
 
-
-//    @Override
-//    public void onLowMemory() {
-//        super.onLowMemory();
-//        Toast.makeText(this, "LOW MEMORY!", Toast.LENGTH_LONG).show();
-//        // free your memory, clean cache for example
-//    }
-
-
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        pausePlayer();
-//        // releasePlayer();
-//        //finish();
-//    }
 
     @Override
     public void onPause() {
@@ -329,27 +304,7 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
             return;
         libvlc.pause();
     }
-
-
-/*    private boolean validateLocation(String location)
-    {
-
-        if (!location.matches("\\w+://.+"))
-            location = "http://".concat(location);
-        if (location.toLowerCase(Locale.ENGLISH).startsWith("http://")) {
-
-            File f;
-            try {
-                f = new File(new URI(location));
-            } catch (URISyntaxException e) {
-                return false;
-            }
-            if (!f.isFile())
-                return false;
-        }
-        return true;
-    } */
-
+ 
     private void releasePlayer() {
         if (libvlc == null)
             return;
