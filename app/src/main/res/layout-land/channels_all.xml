@@ -5,24 +5,24 @@
     android:orientation="horizontal">
 
     <GridView
-        android:numColumns= "auto_fit"
-        android:gravity="center"
-        android:columnWidth="125dp"
-        android:stretchMode="columnWidth"
-        android:scrollbarSize="2dp"
-        android:scrollbarThumbVertical="@drawable/gradient_linear"
+        android:id="@+id/grid"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:columnWidth="125dp"
+        android:gravity="center"
+        android:numColumns="auto_fit"
         android:paddingRight="5dp"
-        android:id="@+id/grid" />
+        android:scrollbarSize="2dp"
+        android:scrollbarThumbVertical="@drawable/gradient_linear"
+        android:stretchMode="columnWidth" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
         android:layout_marginTop="150dp"
-        android:layout_alignParentTop="true">
+        android:gravity="center"
+        android:orientation="horizontal">
 
 
         <ImageButton
@@ -35,9 +35,9 @@
             android:id="@+id/textConnectError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:text="@string/connect_error"
             android:textColor="@color/actionbar_color"
-            android:textSize="12sp"
-            android:layout_marginLeft="10dp" />
+            android:textSize="12sp" />
     </LinearLayout>
 </RelativeLayout>

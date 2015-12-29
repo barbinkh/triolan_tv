@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:numColumns="auto_fit"
-    android:background="@drawable/back"
-    android:gravity="center"
-    android:columnWidth="125dp"
-    android:stretchMode="columnWidth"
+    android:id="@+id/grid_favorite"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@drawable/back"
+    android:columnWidth="125dp"
+    android:gravity="center"
+    android:numColumns="auto_fit"
+    android:paddingRight="5dp"
     android:scrollbarSize="2dp"
     android:scrollbarThumbVertical="@drawable/gradient_linear"
-    android:paddingRight="5dp"
-    android:id="@+id/grid_favorite"></GridView>
+    android:stretchMode="columnWidth"/>

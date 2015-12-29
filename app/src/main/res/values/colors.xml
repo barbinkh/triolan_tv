@@ -7,4 +7,5 @@
     <color name="actionbar_text_color">#ffffffff</color>
     <color name="actionbar_color">#e62118</color>
     <color name="actionbar_color_dark">#c31c13</color>
+    <color name="grey_alpha_0_5">#7d6e6e6e</color>
 </resources>

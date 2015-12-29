@@ -1,6 +1,7 @@
 package com.forwork.triolan.soap;
 
 import java.util.ArrayList;
+
 // Класс создан в виде структуры JSON объекта который парсится наложение данных JSON на элементы данного класса
 public class GetCustomerPlaylistData {
     public GetCustomerPlaylistDataD d = new GetCustomerPlaylistDataD();
@@ -9,9 +10,8 @@ public class GetCustomerPlaylistData {
         public String __type;
         public int CustomerStatus;
         public String Status;
-        ChannelInfo channelInfo = new ChannelInfo();
-
         public ArrayList<ChannelInfo> Channels = new ArrayList<ChannelInfo>();
+        ChannelInfo channelInfo = new ChannelInfo();
 
         public GetCustomerPlaylistDataD() {
 

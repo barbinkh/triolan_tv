@@ -8,14 +8,16 @@
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
 
-            </style>
+    </style>
+
     <style name="MySearchViewStyle" parent="Widget.AppCompat.SearchView">
         <!-- Background for the search query section (e.g. EditText) -->
         <item name="queryBackground">@drawable/abc_textfield_search_material</item>
-         <!-- Search button icon -->
+        <!-- Search button icon -->
         <item name="searchIcon">@drawable/abc_ic_search_api_mtrl_alpha</item>
 
     </style>
+
     <style name="TextAppearanceTriolan" parent="Widget.AppCompat.ActionBar.TabText">
         <item name="android:textColor">#c50000</item>
 

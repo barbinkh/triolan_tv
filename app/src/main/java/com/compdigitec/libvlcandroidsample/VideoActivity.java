@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -15,12 +16,13 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.forwork.triolan.CustomData;
-import com.forwork.triolan.CustomList;
-import com.forwork.triolan.OnSwipeTouchListener;
 import com.forwork.triolan.R;
+import com.forwork.triolan.main.TriolanAPI;
+import com.forwork.triolan.model.CustomData;
+import com.forwork.triolan.ui.listener.OnSwipeTouchListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -30,13 +32,9 @@ import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaList;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class VideoActivity extends FragmentActivity implements SurfaceHolder.Callback,
         IVideoPlayer {
@@ -44,52 +42,83 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     public final static String TAG = "LibVLCAndroidSample/VideoActivity";
     //public static String LOCATION = "com.compdigitec.libvlcandroidsample.VideoActivity.location";
     //public static String LOCATION_SOUND = "com.compdigitec.libvlcandroidsample.VideoActivity.location";
-
-    public String mFilePath = "0";
+    private final static int VideoSizeChanged = -1;
     //private String mFilePath_sound = "0";
-
+    private static final String DATA_CHANNELS = "DataChannels";
+    public String mFilePath = "0";
     // display surface
     private SurfaceView mSurface;
     private SurfaceHolder holder;
-
     // media player
     private LibVLC libvlc;
     private int mVideoWidth;
     private int mVideoHeight;
-    private final static int VideoSizeChanged = -1;
     private ArrayList<CustomData> objects = new ArrayList<CustomData>();
     private SharedPreferences sPref;
     private Button hwDecoding;
-    private static final String DATA_CHANNELS = "DataChannels";
+    private ImageButton playStop;
+    private ImageButton back;
+    private ImageButton next;
+    private ImageButton reSize;
+    private Run animation;
+    private boolean statusSize;
     //  ProgressDialog pd;
+    /**
+     * **********
+     * Events
+     * ***********
+     */
 
+    private Handler mHandler = new MyHandler(this);
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (animation != null) {
+            animation.show();
+        }
+        return super.dispatchTouchEvent(ev);
+
+    }
 
     /**
      * **********
      * Activity
      * ***********
      */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sample);
 
-      /*  pd = new ProgressDialog(this);
-        pd.setProgressStyle(R.id.progress_circular);
-        pd.setMessage("Загрузка потока...");
-        pd.show(); */
-
+        ((TriolanAPI)getApplication()).trackScreenView("Player View");
+        playStop = (ImageButton) findViewById(R.id.sample_play_stop_button);
+        next = (ImageButton) findViewById(R.id.sample_next_button);
+        back = (ImageButton) findViewById(R.id.sample_back_button);
+        reSize = (ImageButton) findViewById(R.id.sample_change_size_button);
+        playStop.setOnClickListener(view1 -> {
+            if (libvlc.isPlaying()) {
+                libvlc.pause();
+                playStop.setBackgroundResource(R.drawable.ic_play_arrow_white_48dp);
+            } else {
+                libvlc.play();
+                playStop.setBackgroundResource(R.drawable.ic_stop_white_48dp);
+            }
+        });
+        next.setOnClickListener(view -> skipNext());
+        back.setOnClickListener(view -> skipPrevisions());
+        reSize.setOnClickListener(view -> setSize(mVideoWidth, mVideoHeight));
+        animation = new Run(findViewById(R.id.sample_control_layout));
+        animation.show();
         Intent intent = getIntent();
-        mFilePath = intent.getExtras().getString("LOCATION");
+        if (intent.getExtras() != null) {
+            mFilePath = intent.getExtras().getString("LOCATION");
+        } else {
+            mFilePath = "http://109.86.150.252:8888/udp/238.0.0.19:1234";
+        }
         loadDataChannels();
         //mFilePath_sound = intent.getExtras().getString("LOCATION_SOUND");
-
-
         View decorView = getWindow().getDecorView();
-        // Hide both the navigation bar and the status bar.
-        // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
-        // a general rule, you should design your app to hide the status bar whenever you
-        // hide the navigation bar.
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
@@ -110,54 +139,17 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
             Toast.makeText(VideoActivity.this, "Ваше устройство не может воспроизвести канал", Toast.LENGTH_SHORT).show();
         }
 
-
         mSurface.setOnTouchListener(new OnSwipeTouchListener(this) {
-
             public void onSwipeTop() {
                 //   Toast.makeText(VideoActivity.this, "top", Toast.LENGTH_SHORT).show();
             }
 
             public void onSwipeRight() {
-
-                int indexClick = 0;
-                for (int i = 0; i < objects.size(); i++) {
-                    if (mFilePath.equals(objects.get(i).getStream())) {
-                        indexClick = i;
-                    }
-                }
-                if (indexClick == 0) {
-                    mFilePath = objects.get(objects.size() - 1).getStream();
-                    Toast.makeText(VideoActivity.this, objects.size() + "/" + (objects.size()) + " " + '"' + objects.get(objects.size() - 1).getWeb() + '"', Toast.LENGTH_SHORT).show();
-                } else {
-                    mFilePath = objects.get(indexClick - 1).getStream();
-                    Toast.makeText(VideoActivity.this, (indexClick) + "/" + (objects.size()) + " " + '"' + objects.get(indexClick - 1).getWeb() + '"', Toast.LENGTH_SHORT).show();
-
-                }
-                try {
-                    libvlc.playMRL(mFilePath);
-                } catch (Exception e) {
-                    Toast.makeText(VideoActivity.this, "Канал временно не доступен", Toast.LENGTH_SHORT).show();
-                }
-
+                skipPrevisions();
             }
 
             public void onSwipeLeft() {
-
-                int indexClick = 0;
-                for (int i = 0; i < objects.size(); i++) {
-                    if (mFilePath.equals(objects.get(i).getStream())) {
-                        indexClick = i;
-                    }
-                }
-                if (indexClick == objects.size() - 1) {
-                    mFilePath = objects.get(0).getStream();
-                    Toast.makeText(VideoActivity.this, 1 + "/" + (objects.size()) + " " + '"' + objects.get(0).getWeb() + '"', Toast.LENGTH_SHORT).show();
-                } else {
-                    mFilePath = objects.get(indexClick + 1).getStream();
-                    Toast.makeText(VideoActivity.this, (indexClick + 2) + "/" + (objects.size()) + " " + '"' + objects.get(indexClick + 1).getWeb() + '"', Toast.LENGTH_SHORT).show();
-
-                }
-                libvlc.playMRL(mFilePath);
+                skipNext();
             }
 
             public void onSwipeBottom() {
@@ -168,8 +160,6 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
                 return gestureDetector.onTouchEvent(event);
             }
         });
-
-
     }
 
     private void loadDataChannels() {
@@ -193,15 +183,9 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         setSize(mVideoWidth, mVideoHeight);
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
-//        if(!validateLocation(mFilePath)) {
-//            Log.w(TAG, "Invalid location " + mFilePath);
-//            Toast.makeText(this, getResources().getString(R.string.invalid_location, mFilePath), Toast.LENGTH_SHORT);
-//
-//        }
         try {
             libvlc.playMRL(mFilePath);
         } catch (Exception e) {
@@ -209,6 +193,7 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         }
 
     }
+
 
     @Override
     public void onPause() {
@@ -223,23 +208,6 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
 
         //finish();
     }
-
-
-//    @Override
-//    public void onLowMemory() {
-//        super.onLowMemory();
-//        Toast.makeText(this, "LOW MEMORY!", Toast.LENGTH_LONG).show();
-//        // free your memory, clean cache for example
-//    }
-
-
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        pausePlayer();
-//        // releasePlayer();
-//        //finish();
-//    }
 
     @Override
     public void onDestroy() {
@@ -267,6 +235,7 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     }
 
     private void setSize(int width, int height) {
+        statusSize = !statusSize;
         mVideoWidth = width;
         mVideoHeight = height;
         if (mVideoWidth * mVideoHeight <= 0)
@@ -276,26 +245,27 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         int w = getWindow().getDecorView().getWidth();
         int h = getWindow().getDecorView().getHeight();
 
-        // getWindow().getDecorView() doesn't always take orientation into
-        // account, we have to correct the values
+        if (statusSize) {
+            // getWindow().getDecorView() doesn't always take orientation into
+            // account, we have to correct the values
 
      /* Раскомментируйте код ниже для пропорционального отображения видео-потока */
 
-   /*     boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-        if (w > h && isPortrait || w < h && !isPortrait) {
-            int i = w;
-            w = h;
-            h = i;
+            boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+            if (w > h && isPortrait || w < h && !isPortrait) {
+                int i = w;
+                w = h;
+                h = i;
+            }
+
+            float videoAR = (float) mVideoWidth / (float) mVideoHeight;
+            float screenAR = (float) w / (float) h;
+
+            if (screenAR < videoAR)
+                h = (int) (w / videoAR);
+            else
+                w = (int) (h * videoAR);
         }
-
-        float videoAR = (float) mVideoWidth / (float) mVideoHeight;
-        float screenAR = (float) w / (float) h;
-
-        if (screenAR < videoAR)
-            h = (int) (w / videoAR);
-        else
-            w = (int) (h * videoAR); */
-
 
         // force surface buffer size
         if (holder != null)
@@ -325,12 +295,7 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     private void createPlayer(String media, final String media_sound) {
         //releasePlayer();
         try {
-            if (media.length() > 0) {
-                /*Toast toast = (this, media, Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0,
-                        0);
-                toast.show();*/
-            }
+
             // Create a new media player
             libvlc = LibVLC.getInstance();
             libvlc.setHardwareAcceleration(LibVLC.HW_ACCELERATION_DISABLED);
@@ -376,35 +341,6 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
         mVideoHeight = 0;
     }
 
-
-/*    private boolean validateLocation(String location)
-    {
-
-        if (!location.matches("\\w+://.+"))
-            location = "http://".concat(location);
-        if (location.toLowerCase(Locale.ENGLISH).startsWith("http://")) {
-
-            File f;
-            try {
-                f = new File(new URI(location));
-            } catch (URISyntaxException e) {
-                return false;
-            }
-            if (!f.isFile())
-                return false;
-        }
-        return true;
-    } */
-
-
-    /**
-     * **********
-     * Events
-     * ***********
-     */
-
-    private Handler mHandler = new MyHandler(this);
-
     private static class MyHandler extends Handler {
         private WeakReference<VideoActivity> mOwner;
 
@@ -436,4 +372,94 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
             }
         }
     }
+
+    public void skipPrevisions() {
+
+        int indexClick = 0;
+        for (int i = 0; i < objects.size(); i++) {
+            if (mFilePath.equals(objects.get(i).getStream())) {
+                indexClick = i;
+            }
+        }
+        if (indexClick == 0) {
+            mFilePath = objects.get(objects.size() - 1).getStream();
+            Toast.makeText(VideoActivity.this, objects.size() + "/" + (objects.size()) + " " + '"' + objects.get(objects.size() - 1).getWeb() + '"', Toast.LENGTH_SHORT).show();
+        } else {
+            mFilePath = objects.get(indexClick - 1).getStream();
+            Toast.makeText(VideoActivity.this, (indexClick) + "/" + (objects.size()) + " " + '"' + objects.get(indexClick - 1).getWeb() + '"', Toast.LENGTH_SHORT).show();
+
+        }
+        try {
+            libvlc.playMRL(mFilePath);
+        } catch (Exception e) {
+            Toast.makeText(VideoActivity.this, "Канал временно не доступен", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void skipNext() {
+
+        int indexClick = 0;
+        for (int i = 0; i < objects.size(); i++) {
+            if (mFilePath.equals(objects.get(i).getStream())) {
+                indexClick = i;
+            }
+        }
+        if (indexClick == objects.size() - 1) {
+            mFilePath = objects.get(0).getStream();
+            Toast.makeText(VideoActivity.this, 1 + "/" + (objects.size()) + " " + '"' + objects.get(0).getWeb() + '"', Toast.LENGTH_SHORT).show();
+        } else {
+            mFilePath = objects.get(indexClick + 1).getStream();
+            Toast.makeText(VideoActivity.this, (indexClick + 2) + "/" + (objects.size()) + " " + '"' + objects.get(indexClick + 1).getWeb() + '"', Toast.LENGTH_SHORT).show();
+
+        }
+        libvlc.playMRL(mFilePath);
+    }
+
+
+    private class Run implements Runnable {
+        private int statusAnimation;
+        private Handler handler;
+        private View view;
+
+        public Run(View view) {
+            this.view = view;
+            handler = new Handler(Looper.myLooper());
+        }
+
+        public void show() {
+            statusAnimation = 0;
+            handler.removeCallbacks(this);
+            run();
+            view.setEnabled(true);
+        }
+
+        @Override
+        public void run() {
+            switch (statusAnimation) {
+                case 0: {
+
+                    view.setAlpha(view.getAlpha() + 0.04f > 1 ? 1f : view.getAlpha() + 0.04f);
+                    if (view.getAlpha() == 1) {
+                        statusAnimation++;
+                        handler.postDelayed(this, 7000);
+                    } else {
+                        handler.postDelayed(this, 25);
+                    }
+                    break;
+                }
+                case 1: {
+                    view.setAlpha(view.getAlpha() - 0.01f < 0 ? 0f : view.getAlpha() - 0.01f);
+                    if (view.getAlpha() == 0) {
+                        statusAnimation++;
+                        view.setEnabled(false);
+                    } else {
+                        handler.postDelayed(this, 25);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
 }

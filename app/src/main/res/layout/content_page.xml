@@ -1,12 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:widget="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/back"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
-        <ImageView
+    <ImageView
         android:id="@+id/video"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,17 +14,14 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginTop="30dp"
-        android:background="@drawable/border" >
-    </ImageView>
-    
+        android:background="@drawable/border"></ImageView>
+
     <tv.triolan.triolantv.horizontallistview.HorizontalListView
         android:id="@+id/hlvCustomList"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="25dp" >
-    </tv.triolan.triolantv.horizontallistview.HorizontalListView>
-
+        android:layout_marginBottom="25dp"></tv.triolan.triolantv.horizontallistview.HorizontalListView>
 
 
 </RelativeLayout>
