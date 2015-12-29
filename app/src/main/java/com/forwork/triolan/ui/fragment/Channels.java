@@ -1,12 +1,9 @@
 package com.forwork.triolan.ui.fragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -114,13 +111,13 @@ public class Channels extends Fragment {
                 loadFavoriteChannels();
                 clearFavoriteChannels();
                 int id_pressed = (int) id;
-                Log.wtf("FAVORITE_CHANNELS_SIZE_NULL", "  " + FavoriteChannels.favoriteChannels.size());
+                Log.d("FAVORITE_CHANNELS_SIZE_NULL", "  " + FavoriteChannels.favoriteChannels.size());
                 if (FavoriteChannels.favoriteChannels.size() == 0) {
 
                     FavoriteChannels.favoriteChannels.add(CustomList.objects.get(id_pressed));
                     ((MainActivity) getActivity()).adapter.notifyDataSetChanged();
                     saveFavoriteChannels(FavoriteChannels.favoriteChannels);
-                    Log.wtf("FAVORITE_CHANNELS_SIZE_all_ravnoO", "  " + FavoriteChannels.favoriteChannels.size());
+                    Log.d("FAVORITE_CHANNELS_SIZE_all_ravnoO", "  " + FavoriteChannels.favoriteChannels.size());
                     Toast.makeText(getActivity(), "Канал добавлен в избранные", Toast.LENGTH_SHORT).show();
 
                 } else {
@@ -128,7 +125,7 @@ public class Channels extends Fragment {
 
                     for (int i = 0; i < FavoriteChannels.favoriteChannels.size(); i++)
                         if (((CustomList.objects.get(id_pressed).getID()) == FavoriteChannels.favoriteChannels.get(i).getID())) {
-                            Log.wtf("FAVORITE_CHANNELS_sravnenie", "  " + CustomList.objects.get(id_pressed).getID() + "-----" + FavoriteChannels.favoriteChannels.get(i).getID());
+                            Log.d("FAVORITE_CHANNELS_sravnenie", "  " + CustomList.objects.get(id_pressed).getID() + "-----" + FavoriteChannels.favoriteChannels.get(i).getID());
                             Toast.makeText(getActivity(), "Канал уже в избранных", Toast.LENGTH_SHORT).show();
 
                             test_tv = true;
@@ -138,7 +135,7 @@ public class Channels extends Fragment {
                         FavoriteChannels.favoriteChannels.add(CustomList.objects.get(id_pressed));
                         ((MainActivity) getActivity()).adapter.notifyDataSetChanged();
                         saveFavoriteChannels(FavoriteChannels.favoriteChannels);
-                        Log.wtf("FAVORITE_CHANNELS_SIZE_all", "  " + FavoriteChannels.favoriteChannels.size());
+                        Log.d("FAVORITE_CHANNELS_SIZE_all", "  " + FavoriteChannels.favoriteChannels.size());
                         Toast.makeText(getActivity(), "Канал добавлен в избранные", Toast.LENGTH_SHORT).show();
 
                     }
@@ -183,7 +180,7 @@ public class Channels extends Fragment {
         progressBar.setMessage("Загрузка каналов...");
         progressBar.show();
 
-        Backend.get(ApiCore.getAlacarteAddress("GetCustomerPlaylist_Free_HTTP"))    // Отправка SOAP запроса на сервайс
+        Backend.get(ApiCore.getAlacarteAddress("GetCustomerPlaylists_Free_HTTP"))    // Отправка SOAP запроса на сервайс
                 .onComplete(new Backend.BackendMethod.OnCompleteListener<GetCustomerPlaylistData>() {     // Получение JSON объекта в виде структуры класса GetCustomerPlaylistData
                     @Override
                     public void onComplete(
@@ -218,7 +215,7 @@ public class Channels extends Fragment {
                             imageConnectError.setVisibility(View.INVISIBLE);
                             clearDataChannels();
                             saveDataChannels(CustomList.objects);
-                        } else {
+                        }else{
                             progressBar.dismiss();
                         }
                     }
@@ -262,46 +259,18 @@ public class Channels extends Fragment {
     }
 
     private void CheckInternet() {
-        CheckConnection inter = new CheckConnection(getActivity());
+        CheckConnection inter = new CheckConnection();
         try {
-            if (inter.isOnline()) {
+            if (inter.CheckConnect()) {
                 textConnectError.setVisibility(View.GONE);
                 imageConnectError.setVisibility(View.GONE);
                 Log.d(TAG, "Internet connection was find!");
                 ChannelsList();
             } else {
-
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                        getActivity());
-
-                // set title
-                alertDialogBuilder.setTitle("Wifi Settings");
-
-                // set dialog message
-                alertDialogBuilder
-                        .setMessage(getString(R.string.wifi_title))
-                        .setCancelable(false)
-                        .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                //enable wifi
-                                startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
-                            }
-                        })
-                        .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                            }
-                        });
-
-                // create alert dialog
-                AlertDialog alertDialog = alertDialogBuilder.create();
-
-                // show it
-                alertDialog.show();
                 imageConnectError.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        CheckInternet();
+                        ChannelsList();
                     }
                 });
 

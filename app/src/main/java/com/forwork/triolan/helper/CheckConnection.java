@@ -1,8 +1,5 @@
 package com.forwork.triolan.helper;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
 
 import java.net.HttpURLConnection;
@@ -12,12 +9,7 @@ public class CheckConnection {
 
     final static String TAG = "mylog";
     Thread t2, t3;
-    Context context;
     int existInternet = 0;
-
-    public CheckConnection(Context context) {
-        this.context = context;
-    }
 
     public boolean CheckConnect() {
 
@@ -77,13 +69,5 @@ public class CheckConnection {
             Log.d(TAG, "error: " + e); // на ошибку можно не обращать внимание
         }
 
-    }
-
-
-    public boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }
