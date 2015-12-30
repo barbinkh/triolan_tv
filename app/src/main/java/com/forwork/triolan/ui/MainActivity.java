@@ -247,15 +247,15 @@ public class MainActivity extends ActionBarActivity implements TabHost.OnTabChan
 
     public void removeFireBounce(View view) {
         findViewById(R.id.activity_main_fire_bounce_view).setVisibility(View.GONE);
-        AdView adView = (AdView) this.findViewById(R.id.adView);
-
-        // Request for Ads
-        AdRequest adRequest = new AdRequest.Builder()
-                .build();
-
-        // Load ads into Banner Ads
-        adView.loadAd(adRequest);
-        adView.setVisibility(View.VISIBLE );
+//        AdView adView = (AdView) this.findViewById(R.id.adView);//Todo add banner
+//
+//        // Request for Ads
+//        AdRequest adRequest = new AdRequest.Builder()
+//                .build();
+//
+//        // Load ads into Banner Ads
+//        adView.loadAd(adRequest);
+//        adView.setVisibility(View.VISIBLE );
     }
 
     /**
