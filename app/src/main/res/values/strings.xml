@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Triolan ТВ</string>
+    <string name="app_name">Triolan TV</string>
     <string name="action_settings">Settings</string>
     <string name="btnEnter">Далее</string>
     <string name="login">Логин:</string>
@@ -20,6 +20,9 @@
     <string name="invalid_location">The location %1$s cannot be played.</string>
     <string name="tab_favorite">Избранные каналы</string>
     <string name="search_title">Поиск</string>
+    <string name="wifi_title">Хотите включить Wi-Fi?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
     <string name="adbuddiz_key">"60bba73d-bdd1-4912-b107-0ff1e114486d"</string>
 
 </resources>

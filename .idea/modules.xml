@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TriolanTV.iml" filepath="$PROJECT_DIR$/TriolanTV.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/triolan_tv-master.iml" filepath="$PROJECT_DIR$/triolan_tv-master.iml" />
     </modules>
   </component>
 </project>

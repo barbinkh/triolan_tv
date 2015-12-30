@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,10 +14,7 @@
         android:id="@android:id/tabhost"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-
-
-        >
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -97,11 +94,11 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:onClick="removeFireBounce"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:background="@drawable/ic_remove_circle_outline_white_48dp" />
+            android:background="@drawable/ic_remove_circle_outline_white_48dp"
+            android:onClick="removeFireBounce" />
     </LinearLayout>
 
 </LinearLayout>

@@ -16,14 +16,13 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppThemeTriolan"
-        android:versionCode="1">
+        android:versionCode="3">
 
         <activity
             android:name=".ui.MainActivity"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"
-
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden|adjustPan">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

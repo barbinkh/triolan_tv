@@ -19,7 +19,7 @@ android {
         applicationId 'com.triolan.triolantb'
         minSdkVersion 11
         targetSdkVersion 21
-        versionName '1.0'
+        versionName '1.2'
     }
     productFlavors {
         armv7 {
