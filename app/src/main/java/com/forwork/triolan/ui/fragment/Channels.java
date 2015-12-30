@@ -215,7 +215,7 @@ public class Channels extends Fragment {
                             imageConnectError.setVisibility(View.INVISIBLE);
                             clearDataChannels();
                             saveDataChannels(CustomList.objects);
-                        }else{
+                        } else {
                             progressBar.dismiss();
                         }
                     }
@@ -241,16 +241,6 @@ public class Channels extends Fragment {
         }
 
     }
-
-//    public boolean onQueryTextChange(String text_new) {
-//        Log.d("QUERY", "New text is " + text_new);
-//        return true;
-//    }
-//
-//    public boolean onQueryTextSubmit(String text) {
-//        Log.d("QUERY", "Search text is " + text);
-//        return true;
-//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
