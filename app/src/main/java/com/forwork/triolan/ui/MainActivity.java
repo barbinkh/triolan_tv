@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -19,6 +20,9 @@ import com.forwork.triolan.ui.adapter.CustomListFavChannels;
 import com.forwork.triolan.ui.adapter.PagerAdapter;
 import com.forwork.triolan.ui.fragment.Channels;
 import com.forwork.triolan.ui.fragment.FavoriteChannels;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.purplebrain.adbuddiz.sdk.AdBuddiz;
 
 import java.util.HashMap;
@@ -40,8 +44,11 @@ public class MainActivity extends ActionBarActivity implements TabHost.OnTabChan
     private ViewPager mViewPager;
     private HashMap<String, TabInfo> mapTabInfo = new HashMap<String, MainActivity.TabInfo>();
     private PagerAdapter mPagerAdapter;
-    private int countResume ;
-
+    private int countResume;
+    private InterstitialAd interstitial;
+    private AdRequest adRequest;
+    private Handler mHandler;
+    private Runnable displayAd;
 
 //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {
@@ -85,8 +92,9 @@ public class MainActivity extends ActionBarActivity implements TabHost.OnTabChan
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
+        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
 
-        ((TriolanAPI)getApplication()).trackScreenView("Main menu");
+        ((TriolanAPI) getApplication()).trackScreenView("Main menu");
         // Initialise the TabHost
         this.initialiseTabHost(savedInstanceState);
         if (savedInstanceState != null) {
@@ -97,17 +105,36 @@ public class MainActivity extends ActionBarActivity implements TabHost.OnTabChan
         this.intialiseViewPager();
         countResume = 0;
         AdBuddiz.cacheAds(this);
+        new Thread(() -> {
+
+        });
+        interstitial = new InterstitialAd(this);
+        interstitial.setAdUnitId("ca-app-pub-1473557112924943/6024683312");
+        adRequest = new AdRequest.Builder()
+//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+//                .addTestDevice("3D27A64B2700ABB4EFAEEB78AB757D94")
+                .build();
+        interstitial.loadAd(adRequest);
+
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
         countResume++;
-        if(countResume>10){
+        if (!interstitial.isLoaded() && !interstitial.isLoading()) {
+            interstitial.loadAd(adRequest);
+        }
+        if (countResume > 5) {
             countResume = 0;
-            AdBuddiz.showAd(this);
+            if (interstitial.isLoaded()) {
+                interstitial.show();
+                //  displayInterstitial();
+            }
         }
     }
+
     //        @Override
 //        public boolean onCreateOptionsMenu(Menu menu) {
 //            getMenuInflater().inflate(R.menu.main_activity_action, menu);
@@ -220,6 +247,15 @@ public class MainActivity extends ActionBarActivity implements TabHost.OnTabChan
 
     public void removeFireBounce(View view) {
         findViewById(R.id.activity_main_fire_bounce_view).setVisibility(View.GONE);
+        AdView adView = (AdView) this.findViewById(R.id.adView);
+
+        // Request for Ads
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+
+        // Load ads into Banner Ads
+        adView.loadAd(adRequest);
+        adView.setVisibility(View.VISIBLE );
     }
 
     /**

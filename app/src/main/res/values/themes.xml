@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppThemeTriolan" parent="Theme.AppCompat">
+    <style name="AppThemeTriolan" parent="Theme.AppCompat.NoActionBar">
         <item name="searchViewStyle">@style/MySearchViewStyle</item>
         <item name="colorPrimary">@color/actionbar_color</item>
         <item name="colorPrimaryDark">@color/actionbar_color_dark</item>
