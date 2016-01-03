@@ -23,6 +23,10 @@ import com.forwork.triolan.R;
 import com.forwork.triolan.main.TriolanAPI;
 import com.forwork.triolan.model.CustomData;
 import com.forwork.triolan.ui.listener.OnSwipeTouchListener;
+import com.google.android.gms.ads.AdActivity;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -62,6 +66,7 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
     private ImageButton reSize;
     private Run animation;
     private boolean statusSize;
+
     //  ProgressDialog pd;
     /**
      * **********
@@ -160,6 +165,16 @@ public class VideoActivity extends FragmentActivity implements SurfaceHolder.Cal
                 return gestureDetector.onTouchEvent(event);
             }
         });
+        AdView adView = (AdView) this.findViewById(R.id.adView);
+
+        adView.setOnClickListener(view -> startActivity(new Intent(this, AdActivity.class)));
+        // Request for Ads
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+
+        // Load ads into Banner Ads
+        adView.loadAd(adRequest);
+        adView.setVisibility(View.VISIBLE);
     }
 
     private void loadDataChannels() {

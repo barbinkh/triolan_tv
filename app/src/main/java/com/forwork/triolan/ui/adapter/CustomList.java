@@ -59,7 +59,6 @@ public class CustomList extends ArrayAdapter<CustomData> implements Filterable {
                 synchronized (context) {
                     filterResults.values = tempList;
                     filterResults.count = tempList.size();
-                    ;
                 }
             }
             return filterResults;
@@ -77,14 +76,16 @@ public class CustomList extends ArrayAdapter<CustomData> implements Filterable {
             }
         }
     };
-    private ImageView streamView;
     private ImageLoader imageLoader;
 
     public CustomList(Activity context, ArrayList<CustomData> objects) {
         super(context, R.layout.data_view, objects);
         this.context = context;
-        this.objects = objects;
-        this.objects_filter = objects;
+        this.objects_filter.clear();
+        this.objects.clear();
+
+        this.objects.addAll(objects);
+        this.objects_filter.addAll(objects);
     }
 
     public void initImageLoader() {
@@ -117,12 +118,7 @@ public class CustomList extends ArrayAdapter<CustomData> implements Filterable {
 
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView = inflater.inflate(R.layout.data_view, null, true);
-//        String fontPath = "fonts/DidactGothic.ttf";
         TextView txtTitle = (TextView) rowView.findViewById(R.id.txt);
-//        // Font Face
-//        Typeface typeface = Typeface.createFromAsset(context.getAssets(), fontPath);
-//        // Applying font
-//        txtTitle.setTypeface(typeface);
         final ImageView imageView = (ImageView) rowView.findViewById(R.id.img);
         try {
             if (objects.get(position).getWeb().length() > 10) {
